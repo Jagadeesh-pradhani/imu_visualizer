@@ -8,7 +8,9 @@ cd ~/ws/
 colcon build
 source install/setup.bash
 
-# Run
+
+###################################
+# Run : IMU+GNSS
 # Terminal 1
 cd ~/ws/
 source install/setup.bash
@@ -18,3 +20,20 @@ ros2 launch bluespace_ai_xsens_mti_driver xsens_mti_node.launch.py
 cd ~/ws/
 source install/setup.bash
 ros2 launch imu_visualizer imu.launch.py
+
+
+
+
+
+
+###################################
+# Run : IMU+GNSS+LIDAR
+# Terminal 1
+cd ~/ws/
+source install/setup.bash
+ros2 launch imu_visualizer imu.launch.py
+
+
+
+# TF tree pdf
+ros2 run tf2_tools view_frames

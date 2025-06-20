@@ -12,13 +12,39 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
-    pub_frame = Node(
+    xsense_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            launch_file_path=PathJoinSubstitution([
+                FindPackageShare('bluespace_ai_xsens_mti_driver'), 'launch', 'xsens_mti_node.launch.py'
+                ]),
+            )
+        )
+    ld.add_action(xsense_launch)
+
+    velodyne_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            launch_file_path=PathJoinSubstitution([
+                FindPackageShare('velodyne'), 'launch', 'velodyne-all-nodes-VLP16-launch.py'
+                ]),
+            )
+        )
+    ld.add_action(velodyne_launch)
+
+    imu_frame = Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='static_tf_pub',
+            name='static_tf_pub_imu',
             arguments=['0', '0', '0', '0', '0', '0', 'world', 'imu_link']
     )
-    ld.add_action(pub_frame)
+    ld.add_action(imu_frame)
+
+    lidar_frame = Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_tf_pub_velodyne',
+            arguments=['0', '0', '0', '0', '0', '0', 'world', 'velodyne']
+    )
+    ld.add_action(lidar_frame)
     
     # Robot State Publisher node
     imu_node = Node(
@@ -30,7 +56,7 @@ def generate_launch_description():
     ld.add_action(imu_node)
 
     # Rviz2 node
-    rviz_config_path = os.path.join(get_package_share_directory('imu_visualizer'), 'rviz', 'test2.rviz')
+    rviz_config_path = os.path.join(get_package_share_directory('imu_visualizer'), 'rviz', 'last.rviz')
     rviz2_node = Node(
         package='rviz2',
         executable='rviz2',
